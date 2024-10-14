@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slot Machine</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <header class="bg-white">
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+          <div class="flex lg:flex-1"></div>
+          <div class="lg:flex lg:gap-x-12">
+            <a href="/index.html" class="text-sm font-semibold leading-6 text-gray-900">Part 1</a>
+            <a href="/index2.html" class="text-sm font-semibold leading-6 text-gray-900">Part 2</a>
+            <a href="/index3.html" class="text-sm font-semibold leading-6 text-gray-900">Part 3</a>
+            <a href="/index4.html" class="text-sm font-bold leading-6 text-gray-900">Part 4</a>
+          </div>
+          <div class="lg:flex lg:flex-1 lg:justify-end"></div>
+        </nav>
+      </header>
+    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <input type="hidden" id="mode" value="child">
+        <div class="slotMachine">
+            <div id="slotsCollection" class="flex flex-col items-center space-y-4">
+                <img id="topSlot" src="src/child-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
+                <img id="centerSlot" src="src/child-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
+                <img id="bottomSlot" src="src/child-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
+            </div>
+
+            <div class="buttonSpin mt-8 flex w-full">
+                <button onclick="startSlotMachine()" id="twist" class="w-1/2 m-1 px-6 py-2 bg-blue-500 text-white font-semibold rounded-l-md hover:bg-blue-600 focus:outline-none">SPIN</button>
+                <button onclick="stopSlotMachine()" id="stop" class="w-1/2 m-1 px-6 py-2 bg-red-500 text-white font-semibold rounded-r-md hover:bg-red-600 focus:outline-none">STOP</button>
+            </div>
+            <div class="flex flex w-full">
+                <button onclick="showResult()" id="result" class="w-full px-6 py-2 m-1 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 focus:outline-none">SHOW RESULT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-blue-500 rounded-lg p-4 relative w-1/3">
+            <button onclick="closeModal()" style="color:white" class="absolute top-2 right-3 text-white-600 hover:text-white-800 text-3xl">&times;</button>
+            <img id="modalImage" src="" alt="Result" class="w-full h-auto mt-8 object-cover rounded-md border">
+            <!-- <h1 id="text" class="mt-2 text-white text-center font-bold text-3xl">Basaburo</h1> -->
+            <canvas id="fireworksCanvas" class="absolute inset-0 pointer-events-none"></canvas>
+        </div>
+    </div>
+    <script>
+    // Image sources
+    const images = [
+        'src/child-1.jpg',
+        'src/child-2.jpg',
+        'src/child-3.jpg',
+        'src/child-4.jpg',
+        'src/child-5.jpg',
+    ];
+
+    // Declare intervals as a global variable so it can be accessed in both functions
+    let intervals = [];
+    
+    // Initially, disable the stop button
+    $(document).ready(function(){
+        $('#stop').addClass('cursor-not-allowed opacity-50');
+        $('#result').addClass('cursor-not-allowed opacity-50');
+    });
+
+    function startSlotMachine() {
+        // Disable spin button and enable stop button
+        $('#twist').addClass('cursor-not-allowed opacity-50');
+        $('#stop').removeClass('cursor-not-allowed opacity-50');
+        $('#result').addClass('cursor-not-allowed opacity-50');
+
+        // Clear any existing intervals
+        intervals.forEach(function(interval) {
+            clearInterval(interval);
+        });
+        intervals = [];
+
+        // Select all slot images
+        let slots = $('#slotsCollection img');
+
+        // Remove any existing highlights or blurs
+        slots.removeClass('ring-4 ring-blue-500 filter blur-md');
+
+        // Add blur effect to all images
+        slots.addClass('filter blur-md');
+
+        // Start spinning each slot
+        slots.each(function() {
+            let slot = $(this);
+            let lastIndex = -1; // Initialize last index for this slot
+            let interval = setInterval(function() {
+                let randImgIndex;
+                do {
+                    randImgIndex = Math.floor(Math.random() * images.length);
+                } while (randImgIndex === lastIndex);
+                lastIndex = randImgIndex;
+                slot.attr('src', images[randImgIndex]);
+            }, 100); // Change image every 100 ms
+            intervals.push(interval);
+        });
+    }
+
+    function stopSlotMachine(){
+        // Stop all intervals
+        intervals.forEach(function(interval) {
+            clearInterval(interval);
+        });
+        // Clear the intervals array for next spin
+        intervals = [];
+
+        // Remove blur from the center image
+        let centerSlot = $('#centerSlot');
+        centerSlot.removeClass('filter blur-md');
+        
+        let topSlot = $('#topSlot');
+        topSlot.removeClass('filter blur-md').addClass('filter blur-md');
+        
+        let bottomSlot = $('#bottomSlot');
+        bottomSlot.removeClass('filter blur-md').addClass('filter blur-md');
+
+        // Highlight the center image
+        centerSlot.addClass('ring-4 ring-blue-500');
+
+        // Enable spin button and disable stop button
+        $('#twist').removeClass('cursor-not-allowed opacity-50');
+        $('#result').removeClass('cursor-not-allowed opacity-50');
+        $('#stop').addClass('cursor-not-allowed opacity-50');
+    }
+    
+    function closeModal(){
+        $('#resultModal').addClass('hidden');
+        stopFireworks();
+    }
+
+    function showResult(){
+        let centerImageSrc = $('#centerSlot').attr('src');
+        let mode = $("#mode").val();
+
+        if(mode == 'close' || mode == 'puzzle'){
+            // Find the index of the last '.' in the filename
+            let dotIndex = centerImageSrc.lastIndexOf('.');
+            // Insert '-full' before the file extension
+            let newSrc = centerImageSrc.substring(0, dotIndex) + '-full' + centerImageSrc.substring(dotIndex);
+            $('#modalImage').attr('src', newSrc);
+            console.log(newSrc);
+        }else{
+            $('#modalImage').attr('src', centerImageSrc);
+        }
+
+        $('#resultModal').removeClass('hidden');
+
+        startFireworks();
+    }
+
+
+    function startFireworks(){
+        let duration = 5 * 1000; // 5 seconds
+        let animationEnd = Date.now() + duration;
+        let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        (function frame() {
+            confetti(Object.assign({}, defaults, {
+                particleCount: 3,
+                origin: {
+                    x: randomInRange(0.1, 0.9),
+                    y: randomInRange(0.1, 0.9)
+                }
+            }));
+
+            if (Date.now() < animationEnd) {
+                animationId = requestAnimationFrame(frame);
+            }
+        }());
+    }
+
+    function stopFireworks(){
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+    }
+    </script>
+</body>
+</html>
