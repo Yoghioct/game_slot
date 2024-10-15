@@ -24,9 +24,9 @@
         <input type="hidden" id="mode" value="close">
         <div class="slotMachine">
             <div id="slotsCollection" class="flex flex-col items-center space-y-4">
-                <img id="topSlot" src="src/close-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
-                <img id="centerSlot" src="src/close-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
-                <img id="bottomSlot" src="src/close-1.jpg" alt="" class="w-72 h-48 object-cover rounded-md border filter blur-md">
+                <img id="topSlot" src="src/close-1.jpg" alt="" class="w-60 h-60 object-cover rounded-md border filter blur-md">
+                <img id="centerSlot" src="src/close-1.jpg" alt="" class="w-60 h-60 object-cover rounded-md border filter blur-md">
+                <img id="bottomSlot" src="src/close-1.jpg" alt="" class="w-60 h-60 object-cover rounded-md border filter blur-md">
             </div>
 
             <div class="buttonSpin mt-8 flex w-full">
@@ -47,6 +47,10 @@
             <canvas id="fireworksCanvas" class="absolute inset-0 pointer-events-none"></canvas>
         </div>
     </div>
+
+    <!-- Add audio elements for sound effects -->
+    <audio id="spinSound" src="src/spinSound.mp3"></audio>
+    <audio id="resultSound" src="src/resultSound.mp3"></audio>
 
     <script>
     // Image sources
@@ -69,6 +73,14 @@
     });
 
     function startSlotMachine() {
+        let resultSound = document.getElementById('resultSound');
+        resultSound.pause(); 
+        resultSound.currentTime = 0; 
+
+        let spinSound = document.getElementById('spinSound');
+        spinSound.loop = true;
+        spinSound.play();
+
         // Disable spin button and enable stop button
         $('#twist').addClass('cursor-not-allowed opacity-50');
         $('#stop').removeClass('cursor-not-allowed opacity-50');
@@ -106,6 +118,10 @@
     }
 
     function stopSlotMachine(){
+        let spinSound = document.getElementById('spinSound');
+        spinSound.pause(); 
+        spinSound.currentTime = 0; 
+
         // Stop all intervals
         intervals.forEach(function(interval) {
             clearInterval(interval);
@@ -138,6 +154,10 @@
     }
 
     function showResult(){
+        let resultSound = document.getElementById('resultSound');
+        resultSound.loop = true;
+        resultSound.play();
+
         let centerImageSrc = $('#centerSlot').attr('src');
         let mode = $("#mode").val();
 
@@ -147,7 +167,6 @@
             // Insert '-full' before the file extension
             let newSrc = centerImageSrc.substring(0, dotIndex) + '-full' + centerImageSrc.substring(dotIndex);
             $('#modalImage').attr('src', newSrc);
-            console.log(newSrc);
         }else{
             $('#modalImage').attr('src', centerImageSrc);
         }
