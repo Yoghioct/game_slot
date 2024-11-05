@@ -13,21 +13,21 @@
           <div class="flex lg:flex-1"></div>
           <div class="lg:flex lg:gap-x-12">
             <a href="/index.html" class="text-sm font-semibold leading-6 text-gray-900">Part 1</a>
-            <a href="/cibg.html" class="text-sm font-semibold leading-6 text-gray-900">CIBG</a>
+            <a href="/cibg.html" class="text-sm font-bold leading-6 text-gray-900">CIBG</a>
             <a href="/index2.html" class="text-sm font-semibold leading-6 text-gray-900">Part 2</a>
             <a href="/index3.html" class="text-sm font-semibold leading-6 text-gray-900">Part 3</a>
-            <a href="/index4.html" class="text-sm font-bold leading-6 text-gray-900">Part 4</a>
+            <a href="/index4.html" class="text-sm font-semibold leading-6 text-gray-900">Part 4</a>
           </div>
           <div class="lg:flex lg:flex-1 lg:justify-end"></div>
         </nav>
       </header>
     <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <input type="hidden" id="mode" value="child">
+        <input type="hidden" id="mode" value="puzzle">
         <div class="slotMachine">
             <div id="slotsCollection" class="flex flex-row items-center space-x-4">
-                <img id="topSlot" src="src/child-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
-                <img id="centerSlot" src="src/child-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
-                <img id="bottomSlot" src="src/child-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
+                <img id="topSlot" src="src/cibg-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
+                <img id="centerSlot" src="src/cibg-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
+                <img id="bottomSlot" src="src/cibg-1.jpg" alt="" class="object-cover rounded-md border filter blur-md" width="500px">
             </div>
 
             <div class="buttonSpin mt-8 flex w-full">
@@ -56,11 +56,13 @@
     <script>
     // Image sources
     const images = [
-        'src/child-1.jpg',
-        'src/child-2.jpg',
-        'src/child-3.jpg',
-        'src/child-4.jpg',
-        'src/child-5.jpg',
+        'src/cibg-1.jpg',
+        'src/cibg-2.jpg',
+        'src/cibg-3.jpg',
+        'src/cibg-4.jpg',
+        'src/cibg-5.jpg',
+        'src/cibg-6.jpg',
+        'src/cibg-7.jpg',
     ];
 
     // Declare intervals as a global variable so it can be accessed in both functions
@@ -166,6 +168,7 @@
             let dotIndex = centerImageSrc.lastIndexOf('.');
             // Insert '-full' before the file extension
             let newSrc = centerImageSrc.substring(0, dotIndex) + '-full' + centerImageSrc.substring(dotIndex);
+            
             $('#modalImage').attr('src', newSrc);
         }else{
             $('#modalImage').attr('src', centerImageSrc);
